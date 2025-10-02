@@ -46,6 +46,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.511.0",
     "tailwindcss": "^4",
+    "turbo": "^2.5.8",
     "typescript": "^5"
   }
 }
