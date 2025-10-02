@@ -8,7 +8,7 @@
     "dev:debug-brk": "NODE_OPTIONS='--inspect-brk' next dev --turbopack",
     "dev:profile": "NODE_OPTIONS='--prof' next dev --turbopack",
     "dev:heap": "NODE_OPTIONS='--inspect --max-old-space-size=4096' next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
     "build:debug": "NODE_OPTIONS='--inspect' next build --turbopack",
     "build:analyze": "ANALYZE=true next build --turbopack",
     "start": "next start",
