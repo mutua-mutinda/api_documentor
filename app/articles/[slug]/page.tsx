@@ -26,7 +26,7 @@ export async function generateMetadata({
 
     if (!article) {
       return {
-        title: "Article Not Found",
+        title: "Documentation Not Found",
       };
     }
 
@@ -41,7 +41,7 @@ export async function generateMetadata({
   } catch (error) {
     console.error("Error generating metadata:", error);
     return {
-      title: "Article Error",
+      title: "Documentation Error",
     };
   }
 }
@@ -49,7 +49,7 @@ export async function generateMetadata({
 // Component to render dynamic zone blocks
 function BlockRenderer({ blocks }: { blocks: DynamicZoneBlock[] }) {
   return (
-    <div className="space-y-8">
+    <div className="mt-4 space-y-8">
       {blocks.map((block, index) => {
         switch (block.__component) {
           case "shared.rich-text": {
@@ -155,14 +155,18 @@ export default async function ArticlePage({
     if (!article) {
       return (
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold">Article Not Found</h1>
+          <h1 className="text-4xl font-bold text-gray-100">
+            Documentation Not Found
+          </h1>
           <p className="text-gray-600 mt-4">
-            The article you're looking for doesn't exist or has been removed.
+            The API documentation guide you're looking for doesn't exist or has
+            been removed.
           </p>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
             <h3 className="font-semibold text-yellow-800">Debug Info:</h3>
             <p className="text-yellow-700 text-sm">
-              Slug: "{slug}" | Article: {article ? "Found" : "null/undefined"}
+              Slug: "{slug}" | Documentation:{" "}
+              {article ? "Found" : "null/undefined"}
             </p>
           </div>
         </div>
@@ -172,19 +176,29 @@ export default async function ArticlePage({
     // Handle both nested and flat formats
     const isFlat = !(article as any).attributes;
     const data = isFlat ? (article as any) : (article as any).attributes;
-    const imageUrl = isFlat
-      ? getStrapiMedia(data.cover?.url)
-      : getStrapiMedia(data.cover?.data?.attributes?.url);
 
     // Define tabs
     const tabs: Tab[] = [
       {
         id: "docs",
-        label: "Docs",
+        label: "API Guide",
         content: (
-          <div>
+          <div className="max-w-7xl mx-auto w-full">
             {data.blocks && data.blocks.length > 0 ? (
-              <BlockRenderer blocks={data.blocks} />
+              <article className="my-4 space-y-4">
+                <h1 className="text-5xl font-bold mb-4 text-gray-100">
+                  {data.title}
+                </h1>
+                {data.description && (
+                  <p className="text-xl text-gray-200">{data.description}</p>
+                )}
+                {data.category?.name && (
+                  <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                    {data.category.name}
+                  </span>
+                )}
+                <BlockRenderer blocks={data.blocks} />
+              </article>
             ) : (
               <div className="text-gray-500 text-center py-8">
                 No documentation content available.
@@ -203,74 +217,22 @@ export default async function ArticlePage({
     return (
       <>
         <Navbar />
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="p-4 sm:p-6">
           {/* Back Button */}
-          <div className="mb-6">
-            <BackButton
-              href="/articles"
-              label="Back to Articles"
-              className="hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors"
-            />
-          </div>
-
-          <article className="max-w-4xl">
-            {imageUrl && (
-              <div className="relative h-96 w-full mb-8 rounded-lg overflow-hidden">
-                <Image
-                  src={imageUrl}
-                  alt={
-                    isFlat
-                      ? data.cover?.alternativeText || data.title
-                      : data.cover?.data?.attributes?.alternativeText ||
-                        data.title
-                  }
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            )}
-
-            <h1 className="text-5xl font-bold mb-4">{data.title}</h1>
-
-            {data.description && (
-              <p className="text-xl text-gray-600 mb-6">{data.description}</p>
-            )}
-
-            <div className="flex items-center gap-4 mb-8 text-gray-600">
-              {isFlat
-                ? data.author?.name && <span>By {data.author.name}</span>
-                : data.author?.data && (
-                    <span>By {data.author.data.attributes.name}</span>
-                  )}
-              {isFlat
-                ? data.category?.name && (
-                    <span className="px-3 py-1 bg-gray-100 rounded-full text-sm">
-                      {data.category.name}
-                    </span>
-                  )
-                : data.category?.data && (
-                    <span className="px-3 py-1 bg-gray-100 rounded-full text-sm">
-                      {data.category.data.attributes.name}
-                    </span>
-                  )}
-              <span>
-                {new Date(
-                  data.publishedAt || data.createdAt,
-                ).toLocaleDateString()}
-              </span>
-            </div>
-
-            {/* Tabs for OpenAPI and Docs */}
-            <Tabs tabs={tabs} defaultTab="docs" className="mt-8" />
-          </article>
+          <BackButton
+            href="/"
+            label="Back"
+            className=" py-2 rounded-lg transition-colors"
+          />
+          {/* Tabs for OpenAPI and Docs */}
+          <Tabs tabs={tabs} defaultTab="docs" className="mt-4" />
         </div>
       </>
     );
   } catch (error) {
-    console.error("Error loading article:", error);
+    console.error("Error loading documentation:", error);
 
-    let errorMessage = "Failed to load article. Please try again later.";
+    let errorMessage = "Failed to load documentation. Please try again later.";
     let errorDetails = null;
 
     if (error instanceof StrapiError) {
@@ -285,14 +247,18 @@ export default async function ArticlePage({
           {/* Back Button */}
           <div className="mb-6">
             <BackButton
-              href="/articles"
-              label="Back to Articles"
-              className="hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors"
+              href="/"
+              label="Back"
+              className="px-3 py-2 rounded-lg transition-colors"
             />
           </div>
-          <h1 className="text-4xl font-bold mb-8">Error Loading Article</h1>
+          <h1 className="text-4xl font-bold mb-8 text-zinc-300">
+            Error Loading Documentation API guide
+          </h1>
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-600 font-semibold">Unable to Load Article</p>
+            <p className="text-red-600 font-semibold">
+              Unable to Load Documentation API guide
+            </p>
             <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
             {process.env.NODE_ENV === "development" && errorDetails && (
               <details className="mt-4">

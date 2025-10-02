@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { getArticles } from "@/lib/api/articles";
-import { getStrapiMedia, StrapiError } from "@/lib/strapi";
+import { StrapiError } from "@/lib/strapi";
 import {
   type Article,
   type FlatArticleData,
@@ -23,15 +22,27 @@ export default async function ArticlesPage() {
     return (
       <>
         <Navbar />
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold mb-8">Articles</h1>
+        <div className="container mx-auto prose-invert px-4 py-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+              Beautiful API Documentation Guide
+            </h2>
+            <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-2xl mx-auto">
+              Use the Documentor Guide API to access contacts, conversations,
+              group messages, and more and seamlessly integrate your product
+              into the workflows of dozens of devoted users.
+            </p>
+          </div>
+          <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+            Get Started
+          </h3>
 
           {!articles || articles.length === 0 ? (
-            <div className="space-y-4">
+            <div className="mt-4 space-y-4">
               <p className="text-gray-200">No articles found.</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="mt-4 space-y-4">
               {/* Full card rendering */}
               <div
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -77,64 +88,50 @@ export default async function ArticlesPage() {
                   }
 
                   try {
-                    const imageUrl = isFlat
-                      ? getStrapiMedia((data as FlatArticleData).cover?.url)
-                      : getStrapiMedia(
-                          (data as Article).cover?.data?.attributes?.url,
-                        );
-
                     return (
-                      <div
+                      <Link
                         key={id}
-                        className="border rounded-lg overflow-hidden hover:shadow-lg transition bg-white"
+                        href={`/articles/${data.slug}`}
+                        className="relative group flex flex-col rounded-lg overflow-hidden hover:shadow-lg transition"
                         style={{
                           visibility: "visible",
-                          display: "block",
                           opacity: 1,
-                          minHeight: "200px",
                         }}
                       >
-                        <Link
-                          href={`/articles/${data.slug}`}
-                          className="block"
-                          style={{
-                            visibility: "visible",
-                            display: "block",
-                            opacity: 1,
-                          }}
-                        >
-                          {imageUrl && (
-                            <div className="relative h-48 w-full bg-gray-900">
-                              <Image
-                                src={imageUrl}
-                                alt={
-                                  isFlat
-                                    ? (data as FlatArticleData).cover
-                                        ?.alternativeText || data.title
-                                    : (data as Article).cover?.data?.attributes
-                                        ?.alternativeText || data.title
-                                }
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          )}
-                          <div className="p-4">
-                            <h2 className="text-xl font-semibold mb-2">
-                              {data.title || `Article ${id}`}
-                            </h2>
-                            <p className="text-gray-600 line-clamp-3">
-                              {data.description || "No description available"}
-                            </p>
+                        <div className="absolute inset-0 rounded-2xl ring-1 ring-zinc-900/7.5 ring-inset group-hover:ring-zinc-900/10 dark:ring-white/10 dark:group-hover:ring-white/20"></div>
+                        <div className="p-4 flex-auto flex flex-col">
+                          <h2 className="text-lg font-semibold mb-2 text-gray-100">
+                            {data.title || `Article ${id}`}
+                          </h2>
+                          <p className="text-gray-200 line-clamp-3 text-sm">
+                            {data.description || "No description available"}
+                          </p>
+                          <div className="mt-auto pt-2 flex items-center gap-2">
                             {isFlat
                               ? (data as FlatArticleData).author?.name && (
-                                  <p className="text-sm text-gray-500 mt-2">
+                                  <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                                    {(data as FlatArticleData).category?.name}
+                                  </span>
+                                )
+                              : (data as Article).category?.data?.attributes
+                                  ?.name && (
+                                  <p className="text-sm text-gray-300 mt-2">
+                                    By{" "}
+                                    {
+                                      (data as Article).category?.data
+                                        ?.attributes?.name
+                                    }
+                                  </p>
+                                )}
+                            {isFlat
+                              ? (data as FlatArticleData).author?.name && (
+                                  <p className="text-sm text-gray-300">
                                     By {(data as FlatArticleData).author?.name}
                                   </p>
                                 )
                               : (data as Article).author?.data?.attributes
                                   ?.name && (
-                                  <p className="text-sm text-gray-500 mt-2">
+                                  <p className="text-sm text-gray-300 mt-2">
                                     By{" "}
                                     {
                                       (data as Article).author?.data?.attributes
@@ -143,8 +140,8 @@ export default async function ArticlesPage() {
                                   </p>
                                 )}
                           </div>
-                        </Link>
-                      </div>
+                        </div>
+                      </Link>
                     );
                   } catch (renderError) {
                     console.error(

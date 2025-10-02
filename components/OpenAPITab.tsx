@@ -2,6 +2,49 @@
 
 import { ApiReferenceReact } from "@scalar/api-reference-react";
 import { useState, useEffect } from "react";
+import { getStrapiMedia } from "@/lib/strapi";
+
+interface PostmanCollection {
+  info: {
+    name: string;
+    description?: string;
+    version?: string;
+    schema: string;
+  };
+  item: PostmanItem[];
+  variable?: PostmanVariable[];
+}
+
+interface PostmanItem {
+  name: string;
+  request?: PostmanRequest;
+  item?: PostmanItem[];
+  description?: string;
+}
+
+interface PostmanRequest {
+  method: string;
+  header?: Array<{ key: string; value: string }>;
+  url:
+    | {
+        raw: string;
+        host: string[];
+        path: string[];
+        query?: Array<{ key: string; value: string }>;
+      }
+    | string;
+  body?: {
+    mode: string;
+    raw?: string;
+    formdata?: Array<{ key: string; value: string }>;
+  };
+  description?: string;
+}
+
+interface PostmanVariable {
+  key: string;
+  value: string;
+}
 
 interface OpenAPITabProps {
   article: any;
@@ -16,78 +59,226 @@ export default function OpenAPITab({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Extract OpenAPI spec from article blocks or attachments
-    const extractOpenAPISpec = () => {
-      try {
-        // Look for OpenAPI spec in article blocks
-        if (article?.blocks) {
-          for (const block of article.blocks) {
-            // Check if block contains OpenAPI content
-            if (block.__component === "shared.rich-text" && block.body) {
-              // Try to parse as JSON or YAML
-              const content = block.body.trim();
-              if (
-                content.startsWith("{") ||
-                content.startsWith("openapi:") ||
-                content.startsWith("swagger:")
-              ) {
-                setSpecContent(content);
-                setIsLoading(false);
-                return;
-              }
-            }
+  // Convert Postman Collection to OpenAPI
+  const convertPostmanToOpenAPI = (postmanCollection: PostmanCollection) => {
+    const openApiSpec = {
+      openapi: "3.0.3",
+      info: {
+        title: postmanCollection.info.name || "API Documentation",
+        description:
+          postmanCollection.info.description ||
+          "Converted from Postman Collection",
+        version: postmanCollection.info.version || "1.0.0",
+      },
+      servers: [
+        {
+          url: "https://api.example.com",
+          description: "Base URL (extracted from Postman collection)",
+        },
+      ],
+      paths: {} as any,
+      components: {
+        schemas: {},
+        parameters: {},
+      },
+    };
+
+    const extractBaseUrl = (items: PostmanItem[]): string => {
+      for (const item of items) {
+        if (item.request?.url) {
+          const url =
+            typeof item.request.url === "string"
+              ? item.request.url
+              : item.request.url.raw;
+
+          try {
+            const urlObj = new URL(url.replace(/{{.*?}}/g, "placeholder"));
+            return `${urlObj.protocol}//${urlObj.host}`;
+          } catch (e) {
+            // Continue to next item
           }
         }
+        if (item.item) {
+          const baseUrl = extractBaseUrl(item.item);
+          if (baseUrl !== "https://api.example.com") return baseUrl;
+        }
+      }
+      return "https://api.example.com";
+    };
 
-        // Fallback: Create a sample OpenAPI spec if none found
-        const sampleSpec = {
-          openapi: "3.0.0",
-          info: {
-            title: article?.title || "Sample API",
+    openApiSpec.servers[0].url = extractBaseUrl(postmanCollection.item);
+
+    const processItems = (items: PostmanItem[], basePath = "") => {
+      items.forEach((item) => {
+        if (item.request) {
+          const method = item.request.method.toLowerCase();
+          let path = `/${item.name.toLowerCase().replace(/\s+/g, "-")}`;
+
+          if (item.request.url) {
+            const url =
+              typeof item.request.url === "string"
+                ? item.request.url
+                : item.request.url.raw;
+
+            try {
+              const urlObj = new URL(url.replace(/{{.*?}}/g, "placeholder"));
+              path = urlObj.pathname || path;
+            } catch (e) {
+              // Use fallback path
+            }
+          }
+
+          const fullPath = basePath + path;
+
+          if (!openApiSpec.paths[fullPath]) {
+            openApiSpec.paths[fullPath] = {};
+          }
+
+          const operation: any = {
+            summary: item.name,
             description:
-              article?.description ||
-              "API documentation generated from article content",
-            version: "1.0.0",
-          },
-          servers: [
-            {
-              url: "https://api.example.com/v1",
-              description: "Production server",
-            },
-          ],
-          paths: {
-            "/example": {
-              get: {
-                summary: "Example endpoint",
-                description:
-                  "This is a sample endpoint for demonstration purposes",
-                responses: {
-                  "200": {
-                    description: "Successful response",
-                    content: {
-                      "application/json": {
-                        schema: {
-                          type: "object",
-                          properties: {
-                            message: {
-                              type: "string",
-                              example: "Hello World",
-                            },
-                          },
+              item.description ||
+              item.request.description ||
+              `${method.toUpperCase()} ${fullPath}`,
+            responses: {
+              "200": {
+                description: "Successful response",
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      properties: {
+                        message: {
+                          type: "string",
+                          example: "Success",
                         },
                       },
                     },
                   },
                 },
               },
+              "400": { description: "Bad request" },
+              "500": { description: "Internal server error" },
             },
-          },
-        };
+          };
 
-        setSpecContent(JSON.stringify(sampleSpec, null, 2));
+          if (
+            item.request.url &&
+            typeof item.request.url === "object" &&
+            item.request.url.query
+          ) {
+            operation.parameters = item.request.url.query.map((q: any) => ({
+              name: q.key,
+              in: "query",
+              required: false,
+              schema: {
+                type: "string",
+                example: q.value,
+              },
+            }));
+          }
+
+          if (["post", "put", "patch"].includes(method) && item.request.body) {
+            operation.requestBody = {
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      data: {
+                        type: "string",
+                        example: item.request.body.raw || "Request body data",
+                      },
+                    },
+                  },
+                },
+              },
+            };
+          }
+
+          openApiSpec.paths[fullPath][method] = operation;
+        } else if (item.item) {
+          processItems(
+            item.item,
+            basePath + `/${item.name.toLowerCase().replace(/\s+/g, "-")}`,
+          );
+        }
+      });
+    };
+
+    processItems(postmanCollection.item);
+    return openApiSpec;
+  };
+
+  useEffect(() => {
+    // Extract OpenAPI spec from article's openapi file attachment
+    const extractOpenAPISpec = async () => {
+      try {
+        // Check if article has openapi file attachment
+        if (article?.openapi && article.openapi.url) {
+          // Check if it's a valid OpenAPI file type
+          const validExtensions = [".yaml", ".yml", ".json"];
+          const fileExtension = article.openapi.ext?.toLowerCase();
+
+          if (validExtensions.includes(fileExtension)) {
+            // Get the full URL for the OpenAPI file
+            const openapiUrl = getStrapiMedia(article.openapi.url);
+
+            try {
+              // Fetch the actual file content
+              const response = await fetch(openapiUrl);
+              console.log("response", response);
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+
+              let finalSpec;
+              let content;
+              if (fileExtension === ".json") {
+                content = await response.json();
+                if (content.info?.schema?.includes("getpostman.com")) {
+                  console.log(
+                    "Detected Postman Collection, converting to OpenAPI...",
+                  );
+                  finalSpec = convertPostmanToOpenAPI(
+                    content as PostmanCollection,
+                  );
+                } else if (content.openapi || content.swagger) {
+                  finalSpec = content;
+                } else {
+                  finalSpec = content;
+                }
+              } else {
+                // For YAML files, we'll pass the URL directly to ApiReferenceReact
+                // as it can handle YAML URLs directly
+                finalSpec = openapiUrl;
+              }
+
+              setSpecContent(finalSpec);
+              setIsLoading(false);
+              return;
+            } catch (fetchError) {
+              console.error("Error fetching OpenAPI spec:", fetchError);
+              setError(
+                `Failed to fetch OpenAPI specification: ${fetchError.message}`,
+              );
+              setIsLoading(false);
+              return;
+            }
+          } else {
+            setError(
+              `Unsupported file type: ${fileExtension}. Please upload a .yaml, .yml, or .json file.`,
+            );
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // No OpenAPI file found
+        setSpecContent(null);
         setIsLoading(false);
       } catch (err) {
+        console.error("Error processing OpenAPI spec:", err);
         setError("Failed to load OpenAPI specification");
         setIsLoading(false);
       }
@@ -155,8 +346,8 @@ export default function OpenAPITab({
           </h3>
         </div>
         <p className="text-yellow-700">
-          No OpenAPI specification was found in this article. A sample
-          specification is being displayed instead.
+          No OpenAPI specification was found in this article. Please upload an
+          OpenAPI file (.yaml, .yml, or .json) to the openapi field.
         </p>
       </div>
     );
@@ -164,20 +355,15 @@ export default function OpenAPITab({
 
   return (
     <div className={className}>
-      <div className="border rounded-lg overflow-hidden">
+      <div className="overflow-hidden">
         <ApiReferenceReact
           configuration={{
             theme: "default",
             layout: "modern",
-            content: specContent,
-            customCss: `
-              .scalar-api-reference {
-                border: none;
-              }
-              .scalar-api-reference .section {
-                margin: 0;
-              }
-            `,
+            showSidebar: true,
+            ...(typeof specContent === "string"
+              ? { url: specContent }
+              : { content: specContent }),
           }}
         />
       </div>

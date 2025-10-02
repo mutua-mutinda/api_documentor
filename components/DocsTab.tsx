@@ -40,7 +40,7 @@ export default function DocsTab({
         <p className="text-xl text-gray-600 mb-6">{data.description}</p>
       )}
 
-      <div className="flex items-center gap-4 mb-8 text-gray-600">
+      <div className="flex items-center gap-4 mb-8 text-gray-200">
         {isFlat
           ? data.author?.name && <span>By {data.author.name}</span>
           : data.author?.data && (

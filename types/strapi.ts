@@ -102,6 +102,29 @@ export interface FlatMedia {
   mime?: string;
 }
 
+// OpenAPI file type (from Strapi media)
+export interface StrapiOpenAPIFile {
+  id: number;
+  name: string;
+  alternativeText?: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  formats?: any;
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl?: string;
+  provider: string;
+  provider_metadata?: any;
+  createdAt: string;
+  updatedAt: string;
+  documentId: string;
+  publishedAt?: string;
+}
+
 // Flat author type
 export interface FlatAuthor {
   name: string;
@@ -120,15 +143,6 @@ export interface NestedArticle {
   title: string;
   slug: string;
   description: string;
-  cover?: {
-    data: StrapiEntity<{
-      url: string;
-      alternativeText?: string;
-      width: number;
-      height: number;
-      mime?: string;
-    }> | null;
-  };
   author?: {
     data: StrapiEntity<{
       name: string;
@@ -147,6 +161,9 @@ export interface NestedArticle {
     }> | null;
   };
   blocks?: DynamicZoneBlock[];
+  openapi?: {
+    data: StrapiEntity<StrapiOpenAPIFile> | null;
+  };
 }
 
 // Flat format article
@@ -154,10 +171,10 @@ export interface FlatArticleData {
   title: string;
   slug: string;
   description: string;
-  cover?: FlatMedia;
   author?: FlatAuthor;
   category?: FlatCategory;
   blocks?: DynamicZoneBlock[];
+  openapi?: StrapiOpenAPIFile;
 }
 
 // Use the nested format as the main Article interface for backward compatibility

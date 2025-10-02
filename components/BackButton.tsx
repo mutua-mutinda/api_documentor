@@ -14,7 +14,7 @@ export default function BackButton({
   href,
   label = "Back",
   className = "",
-  showIcon = true
+  showIcon = true,
 }: BackButtonProps) {
   const router = useRouter();
 
@@ -30,7 +30,7 @@ export default function BackButton({
     <button
       type="button"
       onClick={handleBack}
-      className={`inline-flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors ${className}`}
+      className={`inline-flex items-center space-x-2 text-sm font-medium text-gray-200 hover:text-gray-300 transition-colors ${className}`}
     >
       {showIcon && <ArrowLeft className="h-4 w-4" />}
       <span>{label}</span>

@@ -16,7 +16,6 @@ export async function getArticles(options?: {
     {
       params: {
         populate: {
-          cover: true,
           author: {
             populate: ["avatar"],
           },
@@ -24,6 +23,7 @@ export async function getArticles(options?: {
           blocks: {
             populate: "*",
           },
+          openapi: true,
         },
         pagination: {
           page: options?.page || 1,
@@ -63,7 +63,6 @@ export async function getArticleBySlug(slug: string) {
       params: {
         filters: { slug: { $eq: slug } },
         populate: {
-          cover: true,
           author: {
             populate: ["avatar"],
           },
@@ -71,6 +70,7 @@ export async function getArticleBySlug(slug: string) {
           blocks: {
             populate: "*",
           },
+          openapi: true,
         },
       },
       next: {
@@ -101,7 +101,6 @@ export async function getArticle(id: number) {
   return fetchAPI<StrapiResponse<StrapiArticleEntity>>(`/articles/${id}`, {
     params: {
       populate: {
-        cover: true,
         author: {
           populate: ["avatar"],
         },
@@ -109,6 +108,7 @@ export async function getArticle(id: number) {
         blocks: {
           populate: "*",
         },
+        openapi: true,
       },
     },
     next: {
