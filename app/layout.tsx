@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +28,31 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ErrorBoundary>{children}</ErrorBoundary>
+
+        {/* Suppress browser extension errors in development */}
+        {process.env.NODE_ENV === "development" && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                // Suppress common browser extension errors
+                window.addEventListener('error', function(e) {
+                  if (e.message && e.message.includes('message channel closed')) {
+                    e.preventDefault();
+                    return false;
+                  }
+                });
+
+                window.addEventListener('unhandledrejection', function(e) {
+                  if (e.reason && e.reason.message && e.reason.message.includes('message channel closed')) {
+                    e.preventDefault();
+                    return false;
+                  }
+                });
+              `,
+            }}
+          />
+        )}
       </body>
     </html>
   );

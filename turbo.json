@@ -1,0 +1,116 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "NEXT_PUBLIC_STRAPI_URL",
+        "STRAPI_API_TOKEN",
+        "STRAPI_WEBHOOK_SECRET",
+        "NODE_ENV",
+        "NODE_OPTIONS"
+      ]
+    },
+    "build:debug": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "NEXT_PUBLIC_STRAPI_URL",
+        "STRAPI_API_TOKEN",
+        "STRAPI_WEBHOOK_SECRET",
+        "NODE_ENV",
+        "NODE_OPTIONS"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NEXT_PUBLIC_STRAPI_URL",
+        "STRAPI_API_TOKEN",
+        "STRAPI_WEBHOOK_SECRET",
+        "NODE_ENV",
+        "NODE_OPTIONS"
+      ]
+    },
+    "dev:debug": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NEXT_PUBLIC_STRAPI_URL",
+        "STRAPI_API_TOKEN",
+        "STRAPI_WEBHOOK_SECRET",
+        "NODE_ENV",
+        "NODE_OPTIONS"
+      ]
+    },
+    "dev:debug-brk": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NEXT_PUBLIC_STRAPI_URL",
+        "STRAPI_API_TOKEN",
+        "STRAPI_WEBHOOK_SECRET",
+        "NODE_ENV",
+        "NODE_OPTIONS"
+      ]
+    },
+    "dev:profile": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NEXT_PUBLIC_STRAPI_URL",
+        "STRAPI_API_TOKEN",
+        "STRAPI_WEBHOOK_SECRET",
+        "NODE_ENV",
+        "NODE_OPTIONS"
+      ]
+    },
+    "dev:heap": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NEXT_PUBLIC_STRAPI_URL",
+        "STRAPI_API_TOKEN",
+        "STRAPI_WEBHOOK_SECRET",
+        "NODE_ENV",
+        "NODE_OPTIONS"
+      ]
+    },
+    "start:debug": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NEXT_PUBLIC_STRAPI_URL",
+        "STRAPI_API_TOKEN",
+        "STRAPI_WEBHOOK_SECRET",
+        "NODE_ENV",
+        "NODE_OPTIONS"
+      ]
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "biome.json"],
+      "outputs": []
+    },
+    "format": {
+      "inputs": ["$TURBO_DEFAULT$", "biome.json"],
+      "outputs": []
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "next-env.d.ts"],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
+    }
+  },
+  "globalEnv": ["NODE_ENV", "VERCEL", "CI"],
+  "globalPassThroughEnv": ["NODE_ENV", "NEXT_PUBLIC_*"]
+}
