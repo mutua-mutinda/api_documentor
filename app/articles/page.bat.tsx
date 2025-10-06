@@ -11,8 +11,8 @@ import {
 } from "@/types/strapi";
 
 export const metadata: Metadata = {
-  title: "Articles",
-  description: "Browse our latest articles",
+  title: "API Guide Documentation",
+  description: "Browse our latest API Guide Documentation",
 };
 
 export default async function ArticlesPage() {
