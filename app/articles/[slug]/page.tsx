@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
-import Image from "next/image";
+import BackButton from "@/components/BackButton";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import Navbar from "@/components/Navbar";
-import BackButton from "@/components/BackButton";
-import Tabs, { type Tab } from "@/components/Tabs";
 import OpenAPITab from "@/components/OpenAPITab";
+import Tabs, { type Tab } from "@/components/Tabs";
 import { getArticleBySlug } from "@/lib/api/articles";
 import { getStrapiMedia, StrapiError } from "@/lib/strapi";
+import type { Metadata } from "next";
+import Image from "next/image";
 import type {
   DynamicZoneBlock,
   MediaBlock,

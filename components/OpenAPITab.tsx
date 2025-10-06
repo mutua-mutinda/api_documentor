@@ -259,9 +259,7 @@ export default function OpenAPITab({
               return;
             } catch (fetchError) {
               console.error("Error fetching OpenAPI spec:", fetchError);
-              setError(
-                `Failed to fetch OpenAPI specification: ${fetchError.message}`,
-              );
+              setError(`Failed to fetch OpenAPI specification: ${fetchError}`);
               setIsLoading(false);
               return;
             }

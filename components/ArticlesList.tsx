@@ -28,10 +28,16 @@ export function ArticlesList() {
       ))}
 
       {/* Pagination */}
-      <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+      <button
+        type="button"
+        onClick={() => setPage(page - 1)}
+        disabled={page === 1}
+      >
         Previous
       </button>
-      <button onClick={() => setPage(page + 1)}>Next</button>
+      <button type="button" onClick={() => setPage(page + 1)}>
+        Next
+      </button>
     </div>
   );
 }
