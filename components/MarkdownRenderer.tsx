@@ -16,7 +16,7 @@ export default function MarkdownRenderer({
   className = "",
 }: MarkdownRendererProps) {
   return (
-    <div className={`markdown-content prose prose-lg max-w-none ${className}`}>
+    <div className={`markdown-content max-w-none ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks, remarkEmoji]}
         rehypePlugins={[rehypeHighlight]}
@@ -39,11 +39,7 @@ export default function MarkdownRenderer({
             const isInline = !className;
 
             if (isInline) {
-              return (
-                <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-red-600">
-                  {children}
-                </code>
-              );
+              return <code className="inline">{children}</code>;
             }
 
             return (

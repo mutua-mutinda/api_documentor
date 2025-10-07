@@ -40,6 +40,7 @@
     "@scalar/api-reference-react": "^0.7.53",
     "@scalar/nextjs-api-reference": "^0.8.17",
     "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -186,11 +186,13 @@ export default async function ArticlePage({
           <div className="max-w-7xl mx-auto w-full">
             {data.blocks && data.blocks.length > 0 ? (
               <article className="my-4 space-y-4">
-                <h1 className="text-5xl font-bold mb-4 text-gray-100">
+                <h1 className="text-lg lg:text-5xl font-bold mb-4 text-gray-100">
                   {data.title}
                 </h1>
                 {data.description && (
-                  <p className="text-xl text-gray-200">{data.description}</p>
+                  <p className="text-base lg:text-xl text-gray-200">
+                    {data.description}
+                  </p>
                 )}
                 {data.category?.name && (
                   <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
