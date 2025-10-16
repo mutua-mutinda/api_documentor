@@ -50,25 +50,31 @@ export default function MarkdownRenderer({
           },
           // Custom table styling
           table: ({ children }) => (
-            <div className="overflow-x-auto my-6">
-              <table className="min-w-full divide-y divide-gray-200">
-                {children}
-              </table>
+            <div className="flow-root mt-4">
+              <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                  <div className="overflow-hidden outline-1 -outline-offset-1 outline-white/10 sm:rounded-lg">
+                    <table className="relative min-w-full divide-y divide-white/15">
+                      {children}
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           ),
           th: ({ children }) => (
-            <th className="px-4 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-3 py-2.5 text-left text-sm font-semibold text-lightgray-100">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+            <td className="px-4 py-2.5 whitespace-nowrap text-sm text-lightgray-100">
               {children}
             </td>
           ),
           // Enhanced blockquote
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-blue-300 bg-blue-50 pl-4 py-2 my-4 italic">
+            <blockquote className="border-l-4 border-lightgray-50 bg-lightgray-800 text-lightgray-50 pl-4 py-2 my-4 italic">
               {children}
             </blockquote>
           ),

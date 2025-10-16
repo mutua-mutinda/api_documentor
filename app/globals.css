@@ -16,6 +16,12 @@
     --font-jetbrains: var(--font-jetbrains-mono);
 }
 
+@theme {
+    --color-lightgray-50: #e7e7e7;
+    --color-lightgray-100: #ededed;
+    --color-lightgray-800: #1e1e1e;
+}
+
 body {
     @apply bg-zinc-900 font-sans;
 }
@@ -25,7 +31,7 @@ body {
     display: block;
     overflow-x: auto;
     padding: 0.5em;
-    background: #1e1e1e;
+    background: var(--color-lightgray-800);
     color: #dcdcdc;
 }
 
@@ -69,7 +75,7 @@ body {
 .hljs-attr,
 .hljs-variable,
 .hljs-template-variable {
-    color: #e7e7e7;
+    color: var(--color-lightgray-50);
 }
 
 .hljs-meta,
@@ -138,29 +144,35 @@ body {
 }
 
 .markdown-content blockquote {
-    border-left: 0.25em solid #d1d5db;
+    border-left: 0.25em solid var(--color-lightgray-50);
     padding: 0 1em;
-    color: #6b7280;
+    /*color: #6b7280;*/
     font-style: italic;
     margin: 1em 0;
 }
 
-.markdown-content table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 1em 0;
+.markdown-content thead {
+    @apply bg-lightgray-800;
 }
 
-.markdown-content th,
+.markdown-content table {
+    @apply relative min-w-full divide-y divide-white/15;
+}
+
 .markdown-content td {
-    border: 1px solid #d1d5db;
-    padding: 0.5em;
-    text-align: left;
+    @apply px-3 py-2.5 text-sm whitespace-nowrap text-lightgray-100;
+}
+
+.markdown-content td > code.inline {
+    @apply bg-zinc-900;
 }
 
 .markdown-content th {
-    background-color: #f9fafb;
-    font-weight: 600;
+    @apply px-3 py-2.5 text-left text-sm font-semibold text-lightgray-100;
+}
+
+.markdown-content tbody {
+    @apply divide-y divide-white/10 bg-lightgray-800;
 }
 
 .markdown-content img {
