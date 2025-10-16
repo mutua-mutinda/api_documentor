@@ -1,6 +1,6 @@
 const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
+  process.env.NEXT_PUBLIC_STRAPI_URL || "https://cms.documentor.evisa.go.ke";
+const NEXT_PUBLIC_STRAPI_API_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
 export class StrapiError extends Error {
   constructor(
@@ -169,8 +169,8 @@ export async function fetchAPI<T>(
   };
 
   // Add authorization for server-side requests
-  if (STRAPI_API_TOKEN && typeof window === "undefined") {
-    headers["Authorization"] = `Bearer ${STRAPI_API_TOKEN}`;
+  if (NEXT_PUBLIC_STRAPI_API_TOKEN && typeof window === "undefined") {
+    headers["Authorization"] = `Bearer ${NEXT_PUBLIC_STRAPI_API_TOKEN}`;
   }
 
   // Merge with any headers from options

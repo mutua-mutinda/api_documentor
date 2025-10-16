@@ -51,9 +51,11 @@ export default function ApiDebugPage() {
             </code>
           </div>
           <div>
-            <strong>STRAPI_API_TOKEN:</strong>{" "}
+            <strong>NEXT_PUBLIC_STRAPI_API_TOKEN:</strong>{" "}
             <code className="bg-blue-100 px-2 py-1 rounded">
-              {process.env.STRAPI_API_TOKEN ? "Set (hidden)" : "Not set"}
+              {process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
+                ? "Set (hidden)"
+                : "Not set"}
             </code>
           </div>
         </div>
@@ -176,8 +178,8 @@ export default function ApiDebugPage() {
             is running
           </li>
           <li>
-            • <strong>401 Unauthorized:</strong> Check your STRAPI_API_TOKEN in
-            .env.local
+            • <strong>401 Unauthorized:</strong> Check your
+            NEXT_PUBLIC_STRAPI_API_TOKEN in .env.local
           </li>
           <li>
             • <strong>404 Not Found:</strong> Verify your NEXT_PUBLIC_STRAPI_URL

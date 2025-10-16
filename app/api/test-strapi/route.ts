@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
+  process.env.NEXT_PUBLIC_STRAPI_URL || "https://cms.documentor.evisa.go.ke";
+const NEXT_PUBLIC_STRAPI_API_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
 export async function POST() {
   const startTime = Date.now();
@@ -19,8 +19,8 @@ export async function POST() {
     };
 
     // Add authorization if token is available
-    if (STRAPI_API_TOKEN) {
-      headers.Authorization = `Bearer ${STRAPI_API_TOKEN}`;
+    if (NEXT_PUBLIC_STRAPI_API_TOKEN) {
+      headers.Authorization = `Bearer ${NEXT_PUBLIC_STRAPI_API_TOKEN}`;
     }
 
     const response = await fetch(`${STRAPI_URL}/api/articles`, {
@@ -91,7 +91,7 @@ export async function POST() {
   // Add environment info
   testResults.environment = {
     strapiUrl: STRAPI_URL,
-    hasToken: !!STRAPI_API_TOKEN,
+    hasToken: !!NEXT_PUBLIC_STRAPI_API_TOKEN,
     nodeEnv: process.env.NODE_ENV,
   };
 

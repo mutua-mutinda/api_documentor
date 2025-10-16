@@ -14,7 +14,7 @@ Create a `.env.local` file with the following variables:
 
 ```bash
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
-STRAPI_API_TOKEN=your_strapi_api_token
+NEXT_PUBLIC_STRAPI_API_TOKEN=your_NEXT_PUBLIC_STRAPI_API_TOKEN
 STRAPI_WEBHOOK_SECRET=your_webhook_secret (coming soon)
 ```
 
